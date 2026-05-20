@@ -5,14 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>rwa.oscurant — tokenized stock arb monitor</title>
 <meta name="description" content="Real-time tokenized stock arbitrage monitor across CEX, DEX, spot & perp venues"/>
-<meta name="theme-color" content="#0a0a0a"/>
+<meta name="theme-color" content="#ffffff"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>$</text></svg>"/>
 <link rel="stylesheet" href="./styles.css"/>
+<script>
+  (function(){
+    var t = localStorage.getItem('rwa_theme') || 'light';
+    if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+  })();
+</script>
 </head>
 <body>
 <header>
-  <h1>rwa<span class="dim">.oscurant</span></h1>
-  <div class="sub">tokenized stock arb monitor · spot + perp · CEX + DEX</div>
+  <div>
+    <h1>rwa<span class="dim">.oscurant</span></h1>
+    <div class="sub">tokenized stock arb monitor · spot + perp · CEX + DEX</div>
+  </div>
+  <button id="theme-toggle" class="theme-toggle" title="toggle theme">◐</button>
 </header>
 
 <section class="controls">

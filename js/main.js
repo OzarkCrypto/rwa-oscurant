@@ -53,6 +53,14 @@ function render(lastTs) {
 }
 
 function setupControls() {
+  const tt = document.getElementById('theme-toggle');
+  if (tt) tt.onclick = () => {
+    const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    if (next === 'dark') document.documentElement.setAttribute('data-theme','dark');
+    else document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('rwa_theme', next);
+  };
   document.getElementById('view-arb').onclick = () => switchView('arb');
   document.getElementById('view-grid').onclick = () => switchView('grid');
   document.getElementById('pause').onclick = () => {
