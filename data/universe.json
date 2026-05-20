@@ -1,266 +1,811 @@
 {
   "_meta": {
-    "note": "venue symbol mapping for tokenized stock arb monitor",
+    "note": "auto-discovered via scripts/discover_universe.py",
     "verified_at": "2026-05-20",
     "patterns": {
-      "bybit": "<TICKER>XUSDT (xStock)",
-      "gate":  "<TICKER>X_USDT (xStock)",
-      "mexc":  "<TICKER>XUSDT (xStock)",
-      "kraken": "<TICKER>xUSD (xStock, requires asset_class=tokenized_asset)",
-      "kraken_futures": "PF_<TICKER>XUSD",
-      "hyperliquid": "<dex>:<asset>, dex in {xyz,cash,flx,km,hyna,abcd}",
-      "binance/okx/kucoin": "no tokenized stocks listed as of verified_at"
+      "bybit": "<T>XUSDT (xStock)",
+      "gate": "<T>X_USDT (xStock)",
+      "mexc": "<T>XUSDT (xStock)",
+      "kraken": "<T>xUSD (asset_class=tokenized_asset)",
+      "kraken_futures": "PF_<T>XUSD",
+      "hyperliquid": "<dex>:<asset>, dex in {xyz,cash,flx,km,hyna,abcd}"
     },
-    "ratio_note": "for index/etf perps (USA500, XYZ100, GOLD, SILVER), perp_px * ratio == etf_px. static basis arb broken — see oscurant memory ETF vs index oracle"
+    "note_index": "USA500/XYZ100/GOLD/SILVER kept as hand-curated INDEX_TICKERS with ratio metadata."
   },
   "tickers": {
     "AAPL": {
-      "name": "Apple",
-      "real": {"polygon": "AAPL", "stooq": "aapl.us"},
-      "cex_spot": {"bybit": "AAPLXUSDT", "gate": "AAPLX_USDT", "mexc": "AAPLXUSDT", "kraken": "AAPLxUSD"},
-      "cex_perp": {"kraken_futures": "PF_AAPLXUSD"},
-      "dex_perp": {"hyperliquid": {"km": "km:AAPL", "xyz": "xyz:AAPL"}},
-      "dex_spot": {"backed_solana": "bAAPL"}
-    },
-    "TSLA": {
-      "name": "Tesla",
-      "real": {"polygon": "TSLA", "stooq": "tsla.us"},
-      "cex_spot": {"bybit": "TSLAXUSDT", "gate": "TSLAX_USDT", "mexc": "TSLAXUSDT", "kraken": "TSLAxUSD"},
-      "cex_perp": {"kraken_futures": "PF_TSLAXUSD"},
-      "dex_perp": {"hyperliquid": {"cash": "cash:TSLA", "flx": "flx:TSLA", "km": "km:TSLA", "xyz": "xyz:TSLA"}},
-      "dex_spot": {"backed_solana": "bTSLA"}
-    },
-    "NVDA": {
-      "name": "Nvidia",
-      "real": {"polygon": "NVDA", "stooq": "nvda.us"},
-      "cex_spot": {"bybit": "NVDAXUSDT", "gate": "NVDAX_USDT", "mexc": "NVDAXUSDT", "kraken": "NVDAxUSD"},
-      "cex_perp": {"kraken_futures": "PF_NVDAXUSD"},
-      "dex_perp": {"hyperliquid": {"cash": "cash:NVDA", "flx": "flx:NVDA", "km": "km:NVDA", "xyz": "xyz:NVDA"}},
-      "dex_spot": {"backed_solana": "bNVDA"}
-    },
-    "MSFT": {
-      "name": "Microsoft",
-      "real": {"polygon": "MSFT", "stooq": "msft.us"},
-      "cex_spot": {"kraken": "MSFTxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"cash": "cash:MSFT", "xyz": "xyz:MSFT"}},
-      "dex_spot": {"backed_solana": "bMSFT"}
-    },
-    "GOOGL": {
-      "name": "Alphabet",
-      "real": {"polygon": "GOOGL", "stooq": "googl.us"},
-      "cex_spot": {"bybit": "GOOGLXUSDT", "gate": "GOOGLX_USDT", "mexc": "GOOGLXUSDT", "kraken": "GOOGLxUSD"},
-      "cex_perp": {"kraken_futures": "PF_GOOGLXUSD"},
-      "dex_perp": {"hyperliquid": {"cash": "cash:GOOGL", "km": "km:GOOGL", "xyz": "xyz:GOOGL"}},
-      "dex_spot": {"backed_solana": "bGOOGL"}
-    },
-    "AMZN": {
-      "name": "Amazon",
-      "real": {"polygon": "AMZN", "stooq": "amzn.us"},
-      "cex_spot": {"bybit": "AMZNXUSDT", "gate": "AMZNX_USDT", "mexc": "AMZNXUSDT", "kraken": "AMZNxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"cash": "cash:AMZN", "xyz": "xyz:AMZN"}},
-      "dex_spot": {"backed_solana": "bAMZN"}
-    },
-    "META": {
-      "name": "Meta",
-      "real": {"polygon": "META", "stooq": "meta.us"},
-      "cex_spot": {"bybit": "METAXUSDT", "gate": "METAX_USDT", "mexc": "METAXUSDT", "kraken": "METAxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"cash": "cash:META", "xyz": "xyz:META"}},
-      "dex_spot": {"backed_solana": "bMETA"}
-    },
-    "COIN": {
-      "name": "Coinbase",
-      "real": {"polygon": "COIN", "stooq": "coin.us"},
-      "cex_spot": {"bybit": "COINXUSDT", "gate": "COINX_USDT", "mexc": "COINXUSDT", "kraken": "COINxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"flx": "flx:COIN", "xyz": "xyz:COIN"}},
-      "dex_spot": {"backed_solana": "bCOIN"}
-    },
-    "CRCL": {
-      "name": "Circle",
-      "real": {"polygon": "CRCL", "stooq": "crcl.us"},
-      "cex_spot": {"bybit": "CRCLXUSDT", "gate": "CRCLX_USDT", "mexc": "CRCLXUSDT", "kraken": "CRCLxUSD"},
-      "cex_perp": {"kraken_futures": "PF_CRCLXUSD"},
-      "dex_perp": {"hyperliquid": {"flx": "flx:CRCL", "xyz": "xyz:CRCL"}},
-      "dex_spot": {}
-    },
-    "HOOD": {
-      "name": "Robinhood",
-      "real": {"polygon": "HOOD", "stooq": "hood.us"},
-      "cex_spot": {"bybit": "HOODXUSDT", "gate": "HOODX_USDT", "mexc": "HOODXUSDT", "kraken": "HOODxUSD"},
-      "cex_perp": {"kraken_futures": "PF_HOODXUSD"},
-      "dex_perp": {"hyperliquid": {"cash": "cash:HOOD", "xyz": "xyz:HOOD"}},
-      "dex_spot": {}
-    },
-    "MSTR": {
-      "name": "MicroStrategy",
-      "real": {"polygon": "MSTR", "stooq": "mstr.us"},
-      "cex_spot": {"gate": "MSTRX_USDT", "kraken": "MSTRxUSD"},
-      "cex_perp": {"kraken_futures": "PF_MSTRXUSD"},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:MSTR"}},
-      "dex_spot": {}
+      "name": "AAPL",
+      "real": {
+        "polygon": "AAPL",
+        "stooq": "aapl.us"
+      },
+      "cex_spot": {
+        "bybit": "AAPLXUSDT",
+        "gate": "AAPLX_USDT",
+        "mexc": "AAPLXUSDT",
+        "kraken": "AAPLxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_AAPLXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:AAPL",
+          "km": "km:AAPL"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bAAPL"
+      }
     },
     "AMD": {
       "name": "AMD",
-      "real": {"polygon": "AMD", "stooq": "amd.us"},
-      "cex_spot": {"kraken": "AMDxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:AMD"}},
+      "real": {
+        "polygon": "AMD",
+        "stooq": "amd.us"
+      },
+      "cex_spot": {
+        "kraken": "AMDxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:AMD"
+        }
+      },
       "dex_spot": {}
     },
-    "INTC": {
-      "name": "Intel",
-      "real": {"polygon": "INTC", "stooq": "intc.us"},
-      "cex_spot": {"kraken": "INTCxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"cash": "cash:INTC", "xyz": "xyz:INTC"}},
+    "AMZN": {
+      "name": "AMZN",
+      "real": {
+        "polygon": "AMZN",
+        "stooq": "amzn.us"
+      },
+      "cex_spot": {
+        "bybit": "AMZNXUSDT",
+        "gate": "AMZNX_USDT",
+        "mexc": "AMZNXUSDT",
+        "kraken": "AMZNxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:AMZN",
+          "cash": "cash:AMZN"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bAMZN"
+      }
+    },
+    "BABA": {
+      "name": "BABA",
+      "real": {
+        "polygon": "BABA",
+        "stooq": "baba.us"
+      },
+      "cex_spot": {},
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:BABA",
+          "km": "km:BABA"
+        }
+      },
       "dex_spot": {}
     },
-    "MU": {
-      "name": "Micron",
-      "real": {"polygon": "MU", "stooq": "mu.us"},
-      "cex_spot": {"kraken": "MUxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"km": "km:MU", "xyz": "xyz:MU"}},
+    "BX": {
+      "name": "BX",
+      "real": {
+        "polygon": "BX",
+        "stooq": "bx.us"
+      },
+      "cex_spot": {
+        "mexc": "BXXUSDT"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:BX"
+        }
+      },
       "dex_spot": {}
     },
-    "ORCL": {
-      "name": "Oracle",
-      "real": {"polygon": "ORCL", "stooq": "orcl.us"},
-      "cex_spot": {"kraken": "ORCLxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:ORCL"}},
-      "dex_spot": {}
+    "COIN": {
+      "name": "COIN",
+      "real": {
+        "polygon": "COIN",
+        "stooq": "coin.us"
+      },
+      "cex_spot": {
+        "bybit": "COINXUSDT",
+        "gate": "COINX_USDT",
+        "mexc": "COINXUSDT",
+        "kraken": "COINxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:COIN",
+          "flx": "flx:COIN"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bCOIN"
+      }
     },
-    "NFLX": {
-      "name": "Netflix",
-      "real": {"polygon": "NFLX", "stooq": "nflx.us"},
-      "cex_spot": {"gate": "NFLXX_USDT", "kraken": "NFLXxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:NFLX"}},
-      "dex_spot": {}
-    },
-    "PLTR": {
-      "name": "Palantir",
-      "real": {"polygon": "PLTR", "stooq": "pltr.us"},
-      "cex_spot": {"kraken": "PLTRxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"km": "km:PLTR", "xyz": "xyz:PLTR"}},
-      "dex_spot": {}
-    },
-    "LLY": {
-      "name": "Eli Lilly",
-      "real": {"polygon": "LLY", "stooq": "lly.us"},
-      "cex_spot": {"gate": "LLYX_USDT", "kraken": "LLYxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:LLY"}},
-      "dex_spot": {}
-    },
-    "TSM": {
-      "name": "TSMC",
-      "real": {"polygon": "TSM", "stooq": "tsm.us"},
-      "cex_spot": {"kraken": "TSMxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:TSM"}},
-      "dex_spot": {}
-    },
-    "SNDK": {
-      "name": "SanDisk",
-      "real": {"polygon": "SNDK", "stooq": "sndk.us"},
-      "cex_spot": {"kraken": "SNDKxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:SNDK"}},
-      "dex_spot": {}
-    },
-    "USAR": {
-      "name": "USA Rare Earth",
-      "real": {"polygon": "USAR", "stooq": "usar.us"},
-      "cex_spot": {"kraken": "USARxUSD"},
-      "cex_perp": {},
-      "dex_perp": {"hyperliquid": {"xyz": "xyz:USAR"}},
-      "dex_spot": {}
-    },
-    "SPY": {
-      "name": "S&P 500 ETF",
-      "real": {"polygon": "SPY", "stooq": "spy.us"},
-      "cex_spot": {"gate": "SPYX_USDT", "mexc": "SPYXUSDT", "kraken": "SPYxUSD"},
-      "cex_perp": {"kraken_futures": "PF_SPYXUSD"},
-      "dex_perp": {"hyperliquid": {
-        "abcd": {"sym": "abcd:USA500", "ratio": 10.0, "is_index": true},
-        "cash": {"sym": "cash:USA500", "ratio": 10.0, "is_index": true},
-        "flx":  {"sym": "flx:USA500",  "ratio": 10.0, "is_index": true},
-        "km":   {"sym": "km:US500",    "ratio": 10.0, "is_index": true}
-      }},
-      "dex_spot": {"backed_solana": "bSPY"}
-    },
-    "QQQ": {
-      "name": "Nasdaq 100 ETF",
-      "real": {"polygon": "QQQ", "stooq": "qqq.us"},
-      "cex_spot": {"gate": "QQQX_USDT", "kraken": "QQQxUSD"},
-      "cex_perp": {"kraken_futures": "PF_QQQXUSD"},
-      "dex_perp": {"hyperliquid": {
-        "xyz": {"sym": "xyz:XYZ100", "ratio": 41.0, "is_index": true},
-        "flx": {"sym": "flx:USA100", "ratio": 41.0, "is_index": true},
-        "km":  {"sym": "km:USTECH",  "ratio": 41.0, "is_index": true}
-      }},
+    "CRCL": {
+      "name": "CRCL",
+      "real": {
+        "polygon": "CRCL",
+        "stooq": "crcl.us"
+      },
+      "cex_spot": {
+        "bybit": "CRCLXUSDT",
+        "gate": "CRCLX_USDT",
+        "mexc": "CRCLXUSDT",
+        "kraken": "CRCLxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_CRCLXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:CRCL",
+          "flx": "flx:CRCL"
+        }
+      },
       "dex_spot": {}
     },
     "GLD": {
       "name": "Gold ETF",
-      "real": {"polygon": "GLD", "stooq": "gld.us"},
-      "cex_spot": {"gate": "GLDX_USDT", "kraken": "GLDxUSD"},
-      "cex_perp": {"kraken_futures": "PF_GLDXUSD"},
-      "dex_perp": {"hyperliquid": {
-        "cash": {"sym": "cash:GOLD", "ratio": 10.88, "is_index": true},
-        "flx":  {"sym": "flx:GOLD",  "ratio": 10.88, "is_index": true},
-        "hyna": {"sym": "hyna:GOLD", "ratio": 10.88, "is_index": true},
-        "km":   {"sym": "km:GOLD",   "ratio": 10.88, "is_index": true},
-        "xyz":  {"sym": "xyz:GOLD",  "ratio": 10.88, "is_index": true}
-      }},
-      "dex_spot": {"backed_solana": "bGOLD"}
+      "real": {
+        "polygon": "GLD",
+        "stooq": "gld.us"
+      },
+      "cex_spot": {
+        "gate": "GLDX_USDT",
+        "kraken": "GLDxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_GLDXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "cash": {
+            "sym": "cash:GOLD",
+            "ratio": 10.88,
+            "is_index": true
+          },
+          "flx": {
+            "sym": "flx:GOLD",
+            "ratio": 10.88,
+            "is_index": true
+          },
+          "hyna": {
+            "sym": "hyna:GOLD",
+            "ratio": 10.88,
+            "is_index": true
+          },
+          "km": {
+            "sym": "km:GOLD",
+            "ratio": 10.88,
+            "is_index": true
+          },
+          "xyz": {
+            "sym": "xyz:GOLD",
+            "ratio": 10.88,
+            "is_index": true
+          }
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bGOLD"
+      }
+    },
+    "GME": {
+      "name": "GME",
+      "real": {
+        "polygon": "GME",
+        "stooq": "gme.us"
+      },
+      "cex_spot": {
+        "kraken": "GMExUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:GME"
+        }
+      },
+      "dex_spot": {}
+    },
+    "GOOGL": {
+      "name": "GOOGL",
+      "real": {
+        "polygon": "GOOGL",
+        "stooq": "googl.us"
+      },
+      "cex_spot": {
+        "bybit": "GOOGLXUSDT",
+        "gate": "GOOGLX_USDT",
+        "mexc": "GOOGLXUSDT",
+        "kraken": "GOOGLxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_GOOGLXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:GOOGL",
+          "cash": "cash:GOOGL",
+          "km": "km:GOOGL"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bGOOGL"
+      }
+    },
+    "HOOD": {
+      "name": "HOOD",
+      "real": {
+        "polygon": "HOOD",
+        "stooq": "hood.us"
+      },
+      "cex_spot": {
+        "bybit": "HOODXUSDT",
+        "gate": "HOODX_USDT",
+        "mexc": "HOODXUSDT",
+        "kraken": "HOODxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_HOODXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:HOOD",
+          "cash": "cash:HOOD"
+        }
+      },
+      "dex_spot": {}
+    },
+    "INTC": {
+      "name": "INTC",
+      "real": {
+        "polygon": "INTC",
+        "stooq": "intc.us"
+      },
+      "cex_spot": {
+        "kraken": "INTCxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:INTC",
+          "cash": "cash:INTC"
+        }
+      },
+      "dex_spot": {}
+    },
+    "LITE": {
+      "name": "LITE",
+      "real": {
+        "polygon": "LITE",
+        "stooq": "lite.us"
+      },
+      "cex_spot": {
+        "kraken": "LITExUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:LITE"
+        }
+      },
+      "dex_spot": {}
+    },
+    "LLY": {
+      "name": "LLY",
+      "real": {
+        "polygon": "LLY",
+        "stooq": "lly.us"
+      },
+      "cex_spot": {
+        "gate": "LLYX_USDT",
+        "kraken": "LLYxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:LLY"
+        }
+      },
+      "dex_spot": {}
+    },
+    "META": {
+      "name": "META",
+      "real": {
+        "polygon": "META",
+        "stooq": "meta.us"
+      },
+      "cex_spot": {
+        "bybit": "METAXUSDT",
+        "gate": "METAX_USDT",
+        "mexc": "METAXUSDT",
+        "kraken": "METAxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:META",
+          "cash": "cash:META"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bMETA"
+      }
+    },
+    "MRVL": {
+      "name": "MRVL",
+      "real": {
+        "polygon": "MRVL",
+        "stooq": "mrvl.us"
+      },
+      "cex_spot": {
+        "kraken": "MRVLxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:MRVL"
+        }
+      },
+      "dex_spot": {}
+    },
+    "MSFT": {
+      "name": "MSFT",
+      "real": {
+        "polygon": "MSFT",
+        "stooq": "msft.us"
+      },
+      "cex_spot": {
+        "kraken": "MSFTxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:MSFT",
+          "cash": "cash:MSFT"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bMSFT"
+      }
+    },
+    "MSTR": {
+      "name": "MSTR",
+      "real": {
+        "polygon": "MSTR",
+        "stooq": "mstr.us"
+      },
+      "cex_spot": {
+        "gate": "MSTRX_USDT",
+        "kraken": "MSTRxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_MSTRXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:MSTR"
+        }
+      },
+      "dex_spot": {}
+    },
+    "MU": {
+      "name": "MU",
+      "real": {
+        "polygon": "MU",
+        "stooq": "mu.us"
+      },
+      "cex_spot": {
+        "kraken": "MUxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:MU",
+          "km": "km:MU"
+        }
+      },
+      "dex_spot": {}
+    },
+    "NFLX": {
+      "name": "NFLX",
+      "real": {
+        "polygon": "NFLX",
+        "stooq": "nflx.us"
+      },
+      "cex_spot": {
+        "gate": "NFLXX_USDT",
+        "kraken": "NFLXxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:NFLX"
+        }
+      },
+      "dex_spot": {}
+    },
+    "NVDA": {
+      "name": "NVDA",
+      "real": {
+        "polygon": "NVDA",
+        "stooq": "nvda.us"
+      },
+      "cex_spot": {
+        "bybit": "NVDAXUSDT",
+        "gate": "NVDAX_USDT",
+        "mexc": "NVDAXUSDT",
+        "kraken": "NVDAxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_NVDAXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:NVDA",
+          "cash": "cash:NVDA",
+          "flx": "flx:NVDA",
+          "km": "km:NVDA"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bNVDA"
+      }
+    },
+    "ORCL": {
+      "name": "ORCL",
+      "real": {
+        "polygon": "ORCL",
+        "stooq": "orcl.us"
+      },
+      "cex_spot": {
+        "kraken": "ORCLxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:ORCL"
+        }
+      },
+      "dex_spot": {}
+    },
+    "PLTR": {
+      "name": "PLTR",
+      "real": {
+        "polygon": "PLTR",
+        "stooq": "pltr.us"
+      },
+      "cex_spot": {
+        "kraken": "PLTRxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:PLTR",
+          "km": "km:PLTR"
+        }
+      },
+      "dex_spot": {}
+    },
+    "QQQ": {
+      "name": "Nasdaq 100 ETF",
+      "real": {
+        "polygon": "QQQ",
+        "stooq": "qqq.us"
+      },
+      "cex_spot": {
+        "gate": "QQQX_USDT",
+        "kraken": "QQQxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_QQQXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": {
+            "sym": "xyz:XYZ100",
+            "ratio": 41.0,
+            "is_index": true
+          },
+          "flx": {
+            "sym": "flx:USA100",
+            "ratio": 41.0,
+            "is_index": true
+          },
+          "km": {
+            "sym": "km:USTECH",
+            "ratio": 41.0,
+            "is_index": true
+          }
+        }
+      },
+      "dex_spot": {}
     },
     "SLV": {
       "name": "Silver ETF",
-      "real": {"polygon": "SLV", "stooq": "slv.us"},
-      "cex_spot": {"kraken": "SLVxUSD"},
+      "real": {
+        "polygon": "SLV",
+        "stooq": "slv.us"
+      },
+      "cex_spot": {
+        "kraken": "SLVxUSD"
+      },
       "cex_perp": {},
-      "dex_perp": {"hyperliquid": {
-        "cash": {"sym": "cash:SILVER", "ratio": 1.106, "is_index": true},
-        "flx":  {"sym": "flx:SILVER",  "ratio": 1.106, "is_index": true},
-        "hyna": {"sym": "hyna:SILVER", "ratio": 1.106, "is_index": true},
-        "km":   {"sym": "km:SILVER",   "ratio": 1.106, "is_index": true},
-        "xyz":  {"sym": "xyz:SILVER",  "ratio": 1.106, "is_index": true}
-      }},
+      "dex_perp": {
+        "hyperliquid": {
+          "cash": {
+            "sym": "cash:SILVER",
+            "ratio": 1.106,
+            "is_index": true
+          },
+          "flx": {
+            "sym": "flx:SILVER",
+            "ratio": 1.106,
+            "is_index": true
+          },
+          "hyna": {
+            "sym": "hyna:SILVER",
+            "ratio": 1.106,
+            "is_index": true
+          },
+          "km": {
+            "sym": "km:SILVER",
+            "ratio": 1.106,
+            "is_index": true
+          },
+          "xyz": {
+            "sym": "xyz:SILVER",
+            "ratio": 1.106,
+            "is_index": true
+          }
+        }
+      },
+      "dex_spot": {}
+    },
+    "SNDK": {
+      "name": "SNDK",
+      "real": {
+        "polygon": "SNDK",
+        "stooq": "sndk.us"
+      },
+      "cex_spot": {
+        "kraken": "SNDKxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:SNDK"
+        }
+      },
+      "dex_spot": {}
+    },
+    "SPY": {
+      "name": "S&P 500 ETF",
+      "real": {
+        "polygon": "SPY",
+        "stooq": "spy.us"
+      },
+      "cex_spot": {
+        "gate": "SPYX_USDT",
+        "mexc": "SPYXUSDT",
+        "kraken": "SPYxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_SPYXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "abcd": {
+            "sym": "abcd:USA500",
+            "ratio": 10.0,
+            "is_index": true
+          },
+          "cash": {
+            "sym": "cash:USA500",
+            "ratio": 10.0,
+            "is_index": true
+          },
+          "flx": {
+            "sym": "flx:USA500",
+            "ratio": 10.0,
+            "is_index": true
+          },
+          "km": {
+            "sym": "km:US500",
+            "ratio": 10.0,
+            "is_index": true
+          }
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bSPY"
+      }
+    },
+    "TSLA": {
+      "name": "TSLA",
+      "real": {
+        "polygon": "TSLA",
+        "stooq": "tsla.us"
+      },
+      "cex_spot": {
+        "bybit": "TSLAXUSDT",
+        "gate": "TSLAX_USDT",
+        "mexc": "TSLAXUSDT",
+        "kraken": "TSLAxUSD"
+      },
+      "cex_perp": {
+        "kraken_futures": "PF_TSLAXUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:TSLA",
+          "cash": "cash:TSLA",
+          "flx": "flx:TSLA",
+          "km": "km:TSLA"
+        }
+      },
+      "dex_spot": {
+        "backed_solana": "bTSLA"
+      }
+    },
+    "TSM": {
+      "name": "TSM",
+      "real": {
+        "polygon": "TSM",
+        "stooq": "tsm.us"
+      },
+      "cex_spot": {
+        "kraken": "TSMxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:TSM"
+        }
+      },
+      "dex_spot": {}
+    },
+    "USAR": {
+      "name": "USAR",
+      "real": {
+        "polygon": "USAR",
+        "stooq": "usar.us"
+      },
+      "cex_spot": {
+        "kraken": "USARxUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:USAR"
+        }
+      },
+      "dex_spot": {}
+    },
+    "XLE": {
+      "name": "XLE",
+      "real": {
+        "polygon": "XLE",
+        "stooq": "xle.us"
+      },
+      "cex_spot": {
+        "kraken": "XLExUSD"
+      },
+      "dex_perp": {
+        "hyperliquid": {
+          "xyz": "xyz:XLE"
+        }
+      },
       "dex_spot": {}
     }
   },
   "venues": {
-    "polygon":         {"label": "Polygon",         "category": "real",     "color": "#888"},
-    "stooq":           {"label": "Stooq EOD",       "category": "real",     "color": "#888"},
-    "binance":         {"label": "Binance",         "category": "cex_spot", "color": "#f3ba2f"},
-    "bybit":           {"label": "Bybit",           "category": "cex_spot", "color": "#f7a600"},
-    "okx":             {"label": "OKX",             "category": "cex_spot", "color": "#000"},
-    "gate":            {"label": "Gate",            "category": "cex_spot", "color": "#3268ff"},
-    "mexc":            {"label": "MEXC",            "category": "cex_spot", "color": "#1378ff"},
-    "kucoin":          {"label": "KuCoin",          "category": "cex_spot", "color": "#24ae8f"},
-    "kraken":          {"label": "Kraken",          "category": "cex_spot", "color": "#5841d8"},
-    "kraken_futures":  {"label": "KF perp",         "category": "cex_perp", "color": "#5841d8"},
-    "hyperliquid":     {"label": "HL HIP3",         "category": "dex_perp", "color": "#97fbe4"},
-    "backed_solana":   {"label": "Backed Sol",      "category": "dex_spot", "color": "#9945ff"}
+    "polygon": {
+      "label": "Polygon",
+      "category": "real",
+      "color": "#888"
+    },
+    "stooq": {
+      "label": "Stooq EOD",
+      "category": "real",
+      "color": "#888"
+    },
+    "binance": {
+      "label": "Binance",
+      "category": "cex_spot",
+      "color": "#f3ba2f"
+    },
+    "bybit": {
+      "label": "Bybit",
+      "category": "cex_spot",
+      "color": "#f7a600"
+    },
+    "okx": {
+      "label": "OKX",
+      "category": "cex_spot",
+      "color": "#000"
+    },
+    "gate": {
+      "label": "Gate",
+      "category": "cex_spot",
+      "color": "#3268ff"
+    },
+    "mexc": {
+      "label": "MEXC",
+      "category": "cex_spot",
+      "color": "#1378ff"
+    },
+    "kucoin": {
+      "label": "KuCoin",
+      "category": "cex_spot",
+      "color": "#24ae8f"
+    },
+    "kraken": {
+      "label": "Kraken",
+      "category": "cex_spot",
+      "color": "#5841d8"
+    },
+    "kraken_futures": {
+      "label": "KF perp",
+      "category": "cex_perp",
+      "color": "#5841d8"
+    },
+    "hyperliquid": {
+      "label": "HL HIP3",
+      "category": "dex_perp",
+      "color": "#97fbe4"
+    },
+    "backed_solana": {
+      "label": "Backed Sol",
+      "category": "dex_spot",
+      "color": "#9945ff"
+    }
   },
   "fees_bps": {
     "_note": "round-trip taker estimate. measured from reference_kraken_hl_fees_measured.md + venue docs",
-    "kraken":          {"taker": 26, "maker": 16, "slip_bps": 5},
-    "kraken_futures":  {"taker": 5,  "maker": 2,  "slip_bps": 3},
-    "hyperliquid":     {"taker": 4.5, "maker": 1.5, "slip_bps": 3},
-    "binance":         {"taker": 10, "maker": 10, "slip_bps": 5},
-    "bybit":           {"taker": 10, "maker": 10, "slip_bps": 8},
-    "okx":             {"taker": 10, "maker": 8,  "slip_bps": 8},
-    "gate":            {"taker": 20, "maker": 20, "slip_bps": 15},
-    "mexc":            {"taker": 0,  "maker": 0,  "slip_bps": 15},
-    "kucoin":          {"taker": 10, "maker": 10, "slip_bps": 10},
-    "backed_solana":   {"taker": 25, "maker": 25, "slip_bps": 30}
+    "kraken": {
+      "taker": 26,
+      "maker": 16,
+      "slip_bps": 5
+    },
+    "kraken_futures": {
+      "taker": 5,
+      "maker": 2,
+      "slip_bps": 3
+    },
+    "hyperliquid": {
+      "taker": 4.5,
+      "maker": 1.5,
+      "slip_bps": 3
+    },
+    "binance": {
+      "taker": 10,
+      "maker": 10,
+      "slip_bps": 5
+    },
+    "bybit": {
+      "taker": 10,
+      "maker": 10,
+      "slip_bps": 8
+    },
+    "okx": {
+      "taker": 10,
+      "maker": 8,
+      "slip_bps": 8
+    },
+    "gate": {
+      "taker": 20,
+      "maker": 20,
+      "slip_bps": 15
+    },
+    "mexc": {
+      "taker": 0,
+      "maker": 0,
+      "slip_bps": 15
+    },
+    "kucoin": {
+      "taker": 10,
+      "maker": 10,
+      "slip_bps": 10
+    },
+    "backed_solana": {
+      "taker": 25,
+      "maker": 25,
+      "slip_bps": 30
+    }
   }
 }

@@ -1,5 +1,5 @@
 import {SOURCES, fetchSource, aggregate} from './aggregator.js';
-import {renderArbTable, renderGrid, renderStatus} from './render.js';
+import {renderArbTable, renderGrid, renderStatus, renderUpdated} from './render.js';
 
 const SRC_IDS = ['binance', 'bybit', 'okx', 'gate', 'mexc', 'kucoin',
                  'kraken', 'kraken_futures', 'hyperliquid',
@@ -43,13 +43,16 @@ async function refresh() {
 }
 
 function render(lastTs) {
+  state.lastTs = lastTs ?? state.lastTs;
   const main = document.getElementById('main');
   if (state.view === 'arb') {
     main.innerHTML = renderArbTable(state.byTicker, {minNetBps: state.minNet});
   } else {
     main.innerHTML = renderGrid(state.byTicker);
   }
-  document.getElementById('status').innerHTML = renderStatus(state.rows, lastTs, state.errs);
+  document.getElementById('status').innerHTML = renderStatus(state.rows, state.lastTs, state.errs);
+  const u = document.getElementById('updated');
+  if (u) u.textContent = renderUpdated(state.lastTs);
 }
 
 function setupControls() {

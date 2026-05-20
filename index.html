@@ -3,31 +3,44 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>rwa.oscurant — tokenized stock arb monitor</title>
-<meta name="description" content="Real-time tokenized stock arbitrage monitor across CEX, DEX, spot & perp venues"/>
-<meta name="theme-color" content="#ffffff"/>
+<title>RWA oscurant</title>
+<meta name="description" content="RWA Oscurant: Tokenized stock monitoring"/>
+<meta name="theme-color" content="#fcfcfb"/>
+<meta property="og:title" content="RWA Oscurant"/>
+<meta property="og:description" content="RWA Oscurant: Tokenized stock monitoring"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://rwa.oscurant.xyz/"/>
+<meta property="og:site_name" content="RWA Oscurant"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RWA Oscurant"/>
+<meta name="twitter:description" content="RWA Oscurant: Tokenized stock monitoring"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>$</text></svg>"/>
-<link rel="stylesheet" href="./styles.css?v=4"/>
-<script src="./js/boot.js?v=4"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=5"/>
+<script src="./js/boot.js?v=5"></script>
 </head>
 <body>
+<div class="c">
+
 <header>
-  <div>
+  <a class="brand" href="/">
     <h1>rwa<span class="dim">.oscurant</span></h1>
-    <div class="sub">tokenized stock arb monitor · spot + perp · CEX + DEX</div>
-  </div>
+    <div class="sub">tokenized stock arb · spot + perp · cex + dex</div>
+  </a>
+  <span class="m" id="updated">—</span>
   <button id="theme-toggle" class="theme-toggle" title="toggle theme">◐</button>
 </header>
 
 <section class="controls">
   <div class="ctl">
     <div class="ctl-tabs">
-      <button id="view-arb" data-v="arb" class="view-tab">arb table</button>
+      <button id="view-arb" data-v="arb" class="view-tab">arb</button>
       <button id="view-grid" data-v="grid" class="view-tab">grid</button>
     </div>
   </div>
   <div class="ctl">
-    <label>min net <input id="minnet" type="number" step="1" style="width:60px"/> bps</label>
+    <label>min net <input id="minnet" type="number" step="1" style="width:54px"/> bps</label>
     <label>refresh
       <select id="interval">
         <option value="3">3s</option>
@@ -40,7 +53,7 @@
     <button id="pause">⏸ pause</button>
   </div>
   <div class="ctl">
-    <label>polygon key (opt) <input id="polygon-key" type="password" placeholder="real stock RT" style="width:200px"/></label>
+    <label>polygon key (opt) <input id="polygon-key" type="password" placeholder="real stock RT" style="width:160px"/></label>
   </div>
   <div class="ctl venues" id="venues"></div>
 </section>
@@ -49,9 +62,10 @@
 <main id="main"></main>
 
 <footer>
-  <span class="muted">no API key required for most venues · arb table excludes index-based perps (USA500/XYZ100/GOLD ratio fuzz)</span>
+  no API key required for most venues · arb table excludes index-based perps (USA500 / XYZ100 / GOLD ratio fuzz)
 </footer>
 
-<script type="module" src="./js/main.js?v=4"></script>
+</div>
+<script type="module" src="./js/main.js?v=5"></script>
 </body>
 </html>

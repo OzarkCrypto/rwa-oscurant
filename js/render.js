@@ -103,6 +103,11 @@ export function renderStatus(rows, lastTs, sourceErrs) {
     const err = sourceErrs[v];
     return `<span class="chip ${ok ? 'ok' : 'off'}" title="${err ? err : v + ' fetched ' + n + ' rows'}">${VENUE_LABELS[v]} ${n}</span>`;
   }).join(' ');
-  const ago = lastTs ? Math.round((Date.now() - lastTs) / 1000) : '—';
-  return `<div class="status"><div class="chips">${chips}</div><div class="muted">updated ${ago}s ago · ${rows.length} rows</div></div>`;
+  return `<div class="status"><div class="chips">${chips}</div><div class="muted">${rows.length} rows</div></div>`;
+}
+
+export function renderUpdated(lastTs) {
+  if (!lastTs) return '—';
+  const ago = Math.round((Date.now() - lastTs) / 1000);
+  return `updated ${ago}s ago`;
 }
