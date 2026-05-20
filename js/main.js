@@ -1,5 +1,5 @@
 import {SOURCES, fetchSource, aggregate} from './aggregator.js';
-import {renderArbTable, renderGrid, renderStatus, renderUpdated} from './render.js';
+import {renderArb, renderGrid, renderStatus, renderUpdated, VENUE_LABELS, VENUE_CAT} from './render.js';
 
 const SRC_IDS = ['binance', 'bybit', 'okx', 'gate', 'mexc', 'kucoin',
                  'kraken', 'kraken_futures', 'hyperliquid',
@@ -45,7 +45,7 @@ function render(lastTs) {
   state.lastTs = lastTs ?? state.lastTs;
   const main = document.getElementById('main');
   if (state.view === 'arb') {
-    main.innerHTML = renderArbTable(state.byTicker, {});
+    main.innerHTML = renderArb(state.byTicker, {});
   } else {
     main.innerHTML = renderGrid(state.byTicker);
   }
@@ -67,7 +67,8 @@ function setupControls() {
   document.getElementById('view-grid').onclick = () => switchView('grid');
   document.getElementById('pause').onclick = () => {
     state.paused = !state.paused;
-    document.getElementById('pause').textContent = state.paused ? '▶ resume' : '⏸ pause';
+    document.getElementById('pause').textContent = state.paused ? '▶' : '⏸';
+    document.getElementById('pause').title = state.paused ? 'resume' : 'pause';
   };
   const iv = document.getElementById('interval');
   iv.value = state.interval;
@@ -77,9 +78,14 @@ function setupControls() {
     restartTimer();
   };
 
+  // venue filter chips with category dot + all/none toggle
   const venueBox = document.getElementById('venues');
   venueBox.innerHTML = SRC_IDS.map(s => `
-    <label class="vchk"><input type="checkbox" data-src="${s}" ${state.enabled[s] ? 'checked' : ''}/> ${s}</label>
+    <label class="vchk" data-cat="${VENUE_CAT[s] || ''}">
+      <span class="vcat"></span>
+      <input type="checkbox" data-src="${s}" ${state.enabled[s] ? 'checked' : ''}/>
+      ${VENUE_LABELS[s] || s}
+    </label>
   `).join('');
   venueBox.querySelectorAll('input').forEach(el => {
     el.onchange = () => {
@@ -89,6 +95,10 @@ function setupControls() {
     };
   });
 
+  // venue all/none toggles
+  document.getElementById('v-all').onclick = (e) => { e.preventDefault(); setAllVenues(true); };
+  document.getElementById('v-none').onclick = (e) => { e.preventDefault(); setAllVenues(false); };
+
   const pgKey = document.getElementById('polygon-key');
   pgKey.value = localStorage.getItem('polygon_key') || '';
   pgKey.onblur = () => {
@@ -96,6 +106,19 @@ function setupControls() {
     else localStorage.removeItem('polygon_key');
     refresh();
   };
+
+  // close settings dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    const s = document.getElementById('settings');
+    if (s && s.open && !s.contains(e.target)) s.open = false;
+  });
+}
+
+function setAllVenues(on) {
+  for (const s of SRC_IDS) state.enabled[s] = on;
+  document.querySelectorAll('.venues input').forEach(el => { el.checked = on; });
+  localStorage.setItem('rwa_enabled', JSON.stringify(state.enabled));
+  refresh();
 }
 
 function switchView(v) {
@@ -110,6 +133,12 @@ function restartTimer() {
   if (timer) clearInterval(timer);
   timer = setInterval(refresh, state.interval * 1000);
 }
+
+// 1s 카운트 — 다음 refresh 까지 사용자가 freshness 체감하게.
+setInterval(() => {
+  const u = document.getElementById('updated');
+  if (u && state.lastTs) u.textContent = renderUpdated(state.lastTs);
+}, 1000);
 
 (async () => {
   await loadUniverse();
