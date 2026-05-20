@@ -1,3 +1,4 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'kraken', label: 'Kraken', category: 'cex_spot'};
 
 export async function fetchAll(symbols) {
@@ -6,7 +7,7 @@ export async function fetchAll(symbols) {
     pair: symbols.join(','),
     asset_class: 'tokenized_asset'
   });
-  const r = await fetch(`https://api.kraken.com/0/public/Ticker?${params}`, {cache: 'no-store'});
+  const r = await pfetch(`https://api.kraken.com/0/public/Ticker?${params}`, {cache: 'no-store'});
   if (!r.ok) throw new Error(`kraken ${r.status}`);
   const j = await r.json();
   if (j.error?.length) throw new Error(`kraken: ${j.error.join(',')}`);

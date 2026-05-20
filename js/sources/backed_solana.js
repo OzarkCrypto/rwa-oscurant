@@ -1,3 +1,4 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'backed_solana', label: 'Backed (Solana)', category: 'dex_spot'};
 
 const MINTS = {
@@ -19,7 +20,7 @@ export async function fetchAll(symbols) {
   const url = `https://price.jup.ag/v6/price?ids=${ids.join(',')}`;
   let j;
   try {
-    const r = await fetch(url, {cache: 'no-store'});
+    const r = await pfetch(url, {cache: 'no-store'});
     if (!r.ok) throw new Error(`jup ${r.status}`);
     j = await r.json();
   } catch {

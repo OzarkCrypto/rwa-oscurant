@@ -1,8 +1,9 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'kucoin', label: 'KuCoin', category: 'cex_spot'};
 
 export async function fetchAll(symbols) {
   const wanted = new Set(symbols);
-  const r = await fetch('https://api.kucoin.com/api/v1/market/allTickers', {cache: 'no-store'});
+  const r = await pfetch('https://api.kucoin.com/api/v1/market/allTickers', {cache: 'no-store'});
   if (!r.ok) throw new Error(`kucoin ${r.status}`);
   const j = await r.json();
   const list = j.data?.ticker ?? [];

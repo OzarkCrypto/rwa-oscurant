@@ -1,8 +1,9 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'kraken_futures', label: 'Kraken Futures', category: 'cex_perp'};
 
 export async function fetchAll(symbols) {
   const wanted = new Set(symbols.map(s => s.toLowerCase()));
-  const r = await fetch('https://futures.kraken.com/derivatives/api/v3/tickers', {cache: 'no-store'});
+  const r = await pfetch('https://futures.kraken.com/derivatives/api/v3/tickers', {cache: 'no-store'});
   if (!r.ok) throw new Error(`kraken_futures ${r.status}`);
   const j = await r.json();
   const list = j.tickers ?? [];

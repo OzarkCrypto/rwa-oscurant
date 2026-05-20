@@ -1,10 +1,11 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'binance', label: 'Binance', category: 'cex_spot'};
 
 export async function fetchAll(symbols) {
   if (!symbols || !symbols.length) return new Map();
   const params = new URLSearchParams({symbols: JSON.stringify(symbols)});
   const url = `https://api.binance.com/api/v3/ticker/bookTicker?${params}`;
-  const r = await fetch(url, {cache: 'no-store'});
+  const r = await pfetch(url, {cache: 'no-store'});
   if (!r.ok) throw new Error(`binance ${r.status}`);
   const arr = await r.json();
   const out = new Map();

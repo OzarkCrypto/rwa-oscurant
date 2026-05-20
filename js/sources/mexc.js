@@ -1,8 +1,9 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'mexc', label: 'MEXC', category: 'cex_spot'};
 
 export async function fetchAll(symbols) {
   const wanted = new Set(symbols);
-  const r = await fetch('https://api.mexc.com/api/v3/ticker/bookTicker', {cache: 'no-store'});
+  const r = await pfetch('https://api.mexc.com/api/v3/ticker/bookTicker', {cache: 'no-store'});
   if (!r.ok) throw new Error(`mexc ${r.status}`);
   const arr = await r.json();
   const out = new Map();

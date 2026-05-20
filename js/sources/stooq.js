@@ -1,10 +1,11 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'stooq', label: 'Stooq EOD', category: 'real'};
 
 export async function fetchAll(symbols) {
   if (!symbols.length) return new Map();
   const q = symbols.join('+');
   const url = `https://stooq.com/q/l/?s=${encodeURIComponent(q)}&f=sd2t2ohlcv&h&e=csv`;
-  const r = await fetch(url, {cache: 'no-store'});
+  const r = await pfetch(url, {cache: 'no-store'});
   if (!r.ok) throw new Error(`stooq ${r.status}`);
   const text = await r.text();
   const lines = text.trim().split(/\r?\n/);

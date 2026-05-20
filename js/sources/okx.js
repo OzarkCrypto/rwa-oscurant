@@ -1,8 +1,9 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'okx', label: 'OKX', category: 'cex_spot'};
 
 export async function fetchAll(symbols) {
   const wanted = new Set(symbols);
-  const r = await fetch('https://www.okx.com/api/v5/market/tickers?instType=SPOT', {cache: 'no-store'});
+  const r = await pfetch('https://www.okx.com/api/v5/market/tickers?instType=SPOT', {cache: 'no-store'});
   if (!r.ok) throw new Error(`okx ${r.status}`);
   const j = await r.json();
   const list = j.data ?? [];

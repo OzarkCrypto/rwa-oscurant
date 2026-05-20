@@ -1,8 +1,9 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'bybit', label: 'Bybit', category: 'cex_spot'};
 
 export async function fetchAll(symbols) {
   const wanted = new Set(symbols);
-  const r = await fetch('https://api.bybit.com/v5/market/tickers?category=spot', {cache: 'no-store'});
+  const r = await pfetch('https://api.bybit.com/v5/market/tickers?category=spot', {cache: 'no-store'});
   if (!r.ok) throw new Error(`bybit ${r.status}`);
   const j = await r.json();
   const list = j.result?.list ?? [];

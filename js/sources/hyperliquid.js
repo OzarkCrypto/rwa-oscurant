@@ -1,3 +1,4 @@
+import {pfetch} from '../proxy.js';
 export const meta = {id: 'hyperliquid', label: 'Hyperliquid HIP3', category: 'dex_perp'};
 
 const DEX_CACHE = new Map();
@@ -6,7 +7,7 @@ const TTL = 3000;
 async function getDexCtx(dex) {
   const c = DEX_CACHE.get(dex);
   if (c && Date.now() - c.ts < TTL) return c.byName;
-  const r = await fetch('https://api.hyperliquid.xyz/info', {
+  const r = await pfetch('https://api.hyperliquid.xyz/info', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({type: 'metaAndAssetCtxs', dex}),
