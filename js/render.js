@@ -31,7 +31,7 @@ function basisClass(bps) {
 }
 
 export function renderArbTable(byTicker, opts) {
-  const minNet = opts.minNetBps ?? 0;
+  const minNet = opts.minNetBps ?? -Infinity;
   const venueFilter = opts.venueFilter ?? null;
   const rows = [];
   for (const tk of Object.keys(byTicker).sort()) {

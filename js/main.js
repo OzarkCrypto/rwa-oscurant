@@ -11,7 +11,6 @@ const state = {
   byTicker: {},
   errs: {},
   view: localStorage.getItem('rwa_view') || 'arb',
-  minNet: parseFloat(localStorage.getItem('rwa_minnet') || '0'),
   interval: parseInt(localStorage.getItem('rwa_interval') || '5', 10),
   paused: false,
   enabled: JSON.parse(localStorage.getItem('rwa_enabled') || 'null') || Object.fromEntries(SRC_IDS.map(s => [s, true]))
@@ -46,7 +45,7 @@ function render(lastTs) {
   state.lastTs = lastTs ?? state.lastTs;
   const main = document.getElementById('main');
   if (state.view === 'arb') {
-    main.innerHTML = renderArbTable(state.byTicker, {minNetBps: state.minNet});
+    main.innerHTML = renderArbTable(state.byTicker, {});
   } else {
     main.innerHTML = renderGrid(state.byTicker);
   }
@@ -69,13 +68,6 @@ function setupControls() {
   document.getElementById('pause').onclick = () => {
     state.paused = !state.paused;
     document.getElementById('pause').textContent = state.paused ? '▶ resume' : '⏸ pause';
-  };
-  const mn = document.getElementById('minnet');
-  mn.value = state.minNet;
-  mn.oninput = () => {
-    state.minNet = parseFloat(mn.value) || 0;
-    localStorage.setItem('rwa_minnet', state.minNet);
-    render();
   };
   const iv = document.getElementById('interval');
   iv.value = state.interval;
