@@ -7,13 +7,8 @@
 <meta name="description" content="Real-time tokenized stock arbitrage monitor across CEX, DEX, spot & perp venues"/>
 <meta name="theme-color" content="#ffffff"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>$</text></svg>"/>
-<link rel="stylesheet" href="./styles.css"/>
-<script>
-  (function(){
-    var t = localStorage.getItem('rwa_theme') || 'light';
-    if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
-  })();
-</script>
+<link rel="stylesheet" href="./styles.css?v=4"/>
+<script src="./js/boot.js?v=4"></script>
 </head>
 <body>
 <header>
@@ -57,6 +52,6 @@
   <span class="muted">no API key required for most venues · arb table excludes index-based perps (USA500/XYZ100/GOLD ratio fuzz)</span>
 </footer>
 
-<script type="module" src="./js/main.js"></script>
+<script type="module" src="./js/main.js?v=4"></script>
 </body>
 </html>
