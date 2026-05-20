@@ -169,14 +169,15 @@ export function renderGrid(byTicker) {
   return tbl + cards;
 }
 
-export function renderStatus(rows, lastTs, sourceErrs) {
+export function renderStatus(rows, lastTs, sourceErrs, srcIds) {
   const byVenue = {};
   for (const r of rows) byVenue[r.venue] = (byVenue[r.venue] || 0) + 1;
-  const chips = Object.keys(VENUE_LABELS).map(v => {
+  const list = srcIds && srcIds.length ? srcIds : Object.keys(VENUE_LABELS);
+  const chips = list.map(v => {
     const n = byVenue[v] || 0;
     const ok = n > 0;
     const err = sourceErrs[v];
-    return `<span class="chip ${ok ? 'ok' : 'off'}" title="${err ? err : v + ' fetched ' + n + ' rows'}">${VENUE_LABELS[v]} ${n}</span>`;
+    return `<span class="chip ${ok ? 'ok' : 'off'}" title="${err ? err : v + ' fetched ' + n + ' rows'}">${VENUE_LABELS[v] || v} ${n}</span>`;
   }).join('');
   return `<div class="status"><div class="chips">${chips}</div><div class="muted">${rows.length} rows</div></div>`;
 }

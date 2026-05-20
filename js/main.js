@@ -1,9 +1,11 @@
 import {SOURCES, fetchSource, aggregate} from './aggregator.js';
 import {renderArb, renderGrid, renderStatus, renderUpdated, VENUE_LABELS, VENUE_CAT} from './render.js';
 
-const SRC_IDS = ['binance', 'bybit', 'okx', 'gate', 'mexc', 'kucoin',
-                 'kraken', 'kraken_futures', 'hyperliquid',
-                 'stooq', 'polygon', 'backed_solana'];
+// 정렬용 fallback. 실제 표시는 universe.json에 실제로 등장하는 venue만 노출.
+const SRC_ORDER = ['binance', 'bybit', 'okx', 'gate', 'mexc', 'kucoin',
+                   'kraken', 'kraken_futures', 'hyperliquid',
+                   'stooq', 'polygon', 'backed_solana'];
+let SRC_IDS = [];
 
 const state = {
   universe: null,
@@ -13,12 +15,25 @@ const state = {
   view: localStorage.getItem('rwa_view') || 'arb',
   interval: parseInt(localStorage.getItem('rwa_interval') || '5', 10),
   paused: false,
-  enabled: JSON.parse(localStorage.getItem('rwa_enabled') || 'null') || Object.fromEntries(SRC_IDS.map(s => [s, true]))
+  enabled: {}
 };
 
 async function loadUniverse() {
   const r = await fetch('./data/universe.json', {cache: 'no-store'});
   state.universe = await r.json();
+  // universe에 실제 심볼 가진 venue만 SRC_IDS에 포함 (Binance/OKX/KuCoin xStock delist 후 비어있음)
+  const present = new Set();
+  for (const tk of Object.values(state.universe.tickers)) {
+    for (const bk of ['cex_spot', 'cex_perp', 'dex_perp', 'dex_spot', 'real']) {
+      const m = tk[bk]; if (!m) continue;
+      for (const v of Object.keys(m)) present.add(v);
+    }
+  }
+  // polygon은 key 없으면 항상 0 → 노출하지 않음. localStorage에 키 있으면 다시 포함.
+  const hasPolyKey = !!localStorage.getItem('polygon_key');
+  SRC_IDS = SRC_ORDER.filter(s => present.has(s) && (s !== 'polygon' || hasPolyKey));
+  const saved = JSON.parse(localStorage.getItem('rwa_enabled') || 'null');
+  state.enabled = Object.fromEntries(SRC_IDS.map(s => [s, saved?.[s] !== false]));
 }
 
 async function refresh() {
@@ -49,7 +64,7 @@ function render(lastTs) {
   } else {
     main.innerHTML = renderGrid(state.byTicker);
   }
-  document.getElementById('status').innerHTML = renderStatus(state.rows, state.lastTs, state.errs);
+  document.getElementById('status').innerHTML = renderStatus(state.rows, state.lastTs, state.errs, SRC_IDS);
   const u = document.getElementById('updated');
   if (u) u.textContent = renderUpdated(state.lastTs);
 }
@@ -102,8 +117,36 @@ function setupControls() {
   const pgKey = document.getElementById('polygon-key');
   pgKey.value = localStorage.getItem('polygon_key') || '';
   pgKey.onblur = () => {
+    const had = SRC_IDS.includes('polygon');
     if (pgKey.value) localStorage.setItem('polygon_key', pgKey.value);
     else localStorage.removeItem('polygon_key');
+    const has = !!pgKey.value;
+    if (had !== has) {
+      // SRC_IDS 다시 빌드해서 polygon 표시 토글
+      if (has && !had) {
+        SRC_IDS = [...SRC_IDS.filter(s => s !== 'polygon'), 'polygon'];
+        state.enabled.polygon = true;
+      } else if (!has && had) {
+        SRC_IDS = SRC_IDS.filter(s => s !== 'polygon');
+        delete state.enabled.polygon;
+      }
+      // venue checkbox 영역 재구성
+      const vbox = document.getElementById('venues');
+      vbox.innerHTML = SRC_IDS.map(s => `
+        <label class="vchk" data-cat="${VENUE_CAT[s] || ''}">
+          <span class="vcat"></span>
+          <input type="checkbox" data-src="${s}" ${state.enabled[s] ? 'checked' : ''}/>
+          ${VENUE_LABELS[s] || s}
+        </label>
+      `).join('');
+      vbox.querySelectorAll('input').forEach(el => {
+        el.onchange = () => {
+          state.enabled[el.dataset.src] = el.checked;
+          localStorage.setItem('rwa_enabled', JSON.stringify(state.enabled));
+          refresh();
+        };
+      });
+    }
     refresh();
   };
 

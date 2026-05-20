@@ -17,7 +17,9 @@ const MINTS = {
 export async function fetchAll(symbols) {
   const ids = symbols.map(s => MINTS[s]).filter(Boolean);
   if (!ids.length) return new Map();
-  const url = `https://price.jup.ag/v6/price?ids=${ids.join(',')}`;
+  // price.jup.ag/v6는 2025-09 deprecate. lite-api.jup.ag/price/v3로 이동.
+  // 응답: {<mint>: {usdPrice, ...}}
+  const url = `https://lite-api.jup.ag/price/v3?ids=${ids.join(',')}`;
   let j;
   try {
     const r = await pfetch(url, {cache: 'no-store'});
@@ -26,12 +28,11 @@ export async function fetchAll(symbols) {
   } catch {
     return new Map();
   }
-  const data = j.data ?? {};
   const out = new Map();
   const ts = Date.now();
   for (const [sym, mint] of Object.entries(MINTS)) {
     if (!symbols.includes(sym)) continue;
-    const px = parseFloat(data[mint]?.price);
+    const px = parseFloat(j[mint]?.usdPrice);
     if (!px) continue;
     out.set(sym, {bid: px, ask: px, last: px, ts});
   }

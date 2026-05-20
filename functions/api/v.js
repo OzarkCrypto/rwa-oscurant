@@ -33,7 +33,12 @@ export async function onRequest(context) {
   if (tu.protocol !== 'https:') return new Response('https only', {status: 400, headers: CORS});
   if (!ALLOWED.has(tu.hostname)) return new Response(`host ${tu.hostname} not allowed`, {status: 403, headers: CORS});
 
-  const init = {method: req.method, headers: {}};
+  const init = {method: req.method, headers: {
+    // stooq, jup 등이 default fetch UA 보면 522/봇 차단. 일반 브라우저 UA 위장.
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'accept': '*/*',
+    'accept-language': 'en-US,en;q=0.9'
+  }};
   const ct = req.headers.get('content-type');
   if (ct) init.headers['content-type'] = ct;
   if (req.method !== 'GET' && req.method !== 'HEAD') init.body = await req.text();
