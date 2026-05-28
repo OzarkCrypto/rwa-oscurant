@@ -214,3 +214,6 @@ footer{margin-top:18px;padding-top:10px;border-top:1px solid var(--b);font-famil
   .tbl-wrap.active{display:block}
   .arb-cards,.grid-cards{display:none !important}
 }
+
+a.cell,a.vl{text-decoration:none;color:inherit;cursor:pointer}
+a.cell:hover,a.vl:hover{opacity:.78}

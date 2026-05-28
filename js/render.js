@@ -23,6 +23,20 @@ const CAT_LABEL = {
 };
 const CAT_ORDER = ['cex-spot', 'cex-perp', 'dex-perp', 'dex-spot', 'real'];
 
+const VENUE_URL = {
+  bybit: (s) => `https://www.bybit.com/en/trade/spot/${s.replace('USDT', '/USDT')}`,
+  gate: (s) => `https://www.gate.io/trade/${s}`,
+  mexc: (s) => `https://www.mexc.com/exchange/${s.replace('USDT', '_USDT')}`,
+  kucoin: (s) => `https://www.kucoin.com/trade/${s.replace('USDT', '-USDT')}`,
+  okx: (s) => `https://www.okx.com/trade-spot/${s.replace('USDT', '-USDT').toLowerCase()}`,
+  binance: (s) => `https://www.binance.com/en/trade/${s.replace('USDT', '_USDT')}`,
+  kraken: (s) => `https://pro.kraken.com/app/trade/${s.toLowerCase()}`,
+  kraken_futures: (s) => `https://futures.kraken.com/trade/futures/${s}`,
+  hyperliquid: (s) => `https://app.hyperliquid.xyz/trade/${s}`,
+  backed_solana: (s) => `https://jup.ag/swap/USDC-${s}`,
+};
+const venueUrl = (v, s) => s && VENUE_URL[v] ? VENUE_URL[v](s) : null;
+
 function basisClass(bps) {
   if (bps == null) return '';
   const ab = Math.abs(bps);
@@ -32,8 +46,10 @@ function basisClass(bps) {
   return 'b3';
 }
 
-function venueBadge(v) {
-  return `<span class="v ${VENUE_CAT[v]}">${VENUE_LABELS[v]}</span>`;
+function venueBadge(v, sym) {
+  const badge = `<span class="v ${VENUE_CAT[v]}">${VENUE_LABELS[v]}</span>`;
+  const url = venueUrl(v, sym);
+  return url ? `<a class="vl" href="${url}" target="_blank" rel="noopener noreferrer">${badge}</a>` : badge;
 }
 
 function arbRowsFiltered(byTicker, opts) {
@@ -65,8 +81,8 @@ export function renderArb(byTicker, opts) {
     tbl += `<tr>
       <td><span class="tkr">${e.ticker}</span>${nameSpan(e.name, e.ticker)}</td>
       <td class="r">${fmtPx(e.ref_px)}</td>
-      <td class="r"><span class="venue-cell">${venueBadge(b.buy_venue)}<span class="px">${fmtPx(b.buy_px)}</span></span></td>
-      <td class="r"><span class="venue-cell">${venueBadge(b.sell_venue)}<span class="px">${fmtPx(b.sell_px)}</span></span></td>
+      <td class="r"><span class="venue-cell">${venueBadge(b.buy_venue, b.buy_sym)}<span class="px">${fmtPx(b.buy_px)}</span></span></td>
+      <td class="r"><span class="venue-cell">${venueBadge(b.sell_venue, b.sell_sym)}<span class="px">${fmtPx(b.sell_px)}</span></span></td>
       <td class="r">${fmtBps(b.gross_bps)}</td>
       <td class="r muted">−${b.fee_bps.toFixed(1)}</td>
       <td class="r ${b.net_bps > 0 ? 'pos' : 'neg'}">${fmtBps(b.net_bps)}</td>
@@ -87,8 +103,8 @@ export function renderArb(byTicker, opts) {
       </div>
       <div class="net-big ${netCls}">${fmtBps(b.net_bps)}<span class="net-lbl">net bps</span></div>
       <div class="legs">
-        <span class="leg-lbl buy">BUY</span>${venueBadge(b.buy_venue)}<span class="leg-px">${fmtPx(b.buy_px)}</span>
-        <span class="leg-lbl sell">SELL</span>${venueBadge(b.sell_venue)}<span class="leg-px">${fmtPx(b.sell_px)}</span>
+        <span class="leg-lbl buy">BUY</span>${venueBadge(b.buy_venue, b.buy_sym)}<span class="leg-px">${fmtPx(b.buy_px)}</span>
+        <span class="leg-lbl sell">SELL</span>${venueBadge(b.sell_venue, b.sell_sym)}<span class="leg-px">${fmtPx(b.sell_px)}</span>
       </div>
       <div class="meta">
         <span>gross ${fmtBps(b.gross_bps)}</span>
@@ -123,7 +139,12 @@ export function renderGrid(byTicker) {
         const cls = basisClass(x.basis_bps);
         const idxBadge = x.is_index ? '<span class="idx">idx</span>' : '';
         const fundBadge = x.funding != null ? `<span class="fund">${fmtFund(x.funding)}</span>` : '';
-        return `<div class="cell ${cls}" title="${x.sym}\n${fmtBps(x.basis_bps)} bps vs ref">${fmtPx(x.last)}<span class="bps">${fmtBps(x.basis_bps)}</span>${idxBadge}${fundBadge}</div>`;
+        const url = venueUrl(x.venue, x.sym);
+        const inner = `${fmtPx(x.last)}<span class="bps">${fmtBps(x.basis_bps)}</span>${idxBadge}${fundBadge}`;
+        const title = `${x.sym}\n${fmtBps(x.basis_bps)} bps vs ref`;
+        return url
+          ? `<a class="cell ${cls}" href="${url}" target="_blank" rel="noopener noreferrer" title="${title}">${inner}</a>`
+          : `<div class="cell ${cls}" title="${title}">${inner}</div>`;
       }).join('');
       tbl += `<td class="r"><div class="cells">${cells}</div></td>`;
     }
@@ -156,7 +177,7 @@ export function renderGrid(byTicker) {
         const fundBadge = x.funding != null ? `<span class="fund">${fmtFund(x.funding)}</span>` : '';
         const symShort = x.sym && x.sym.length > 14 ? x.sym.slice(0, 13) + '…' : (x.sym || '');
         cards += `<div class="grow ${cls}">
-          <span>${venueBadge(x.venue)}</span>
+          <span>${venueBadge(x.venue, x.sym)}</span>
           <span class="sym" title="${x.sym || ''}">${symShort}</span>
           <span class="px">${fmtPx(x.last)}</span>
           <span class="bps">${fmtBps(x.basis_bps)}${idxBadge || fundBadge ? ' <span class="badges">'+idxBadge+fundBadge+'</span>' : ''}</span>

@@ -119,6 +119,10 @@ function median(arr) {
   return s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2;
 }
 
+// ref 대비 ±3000bps (30%) 이상 벌어진 venue는 거래 가능한 호가가 아님
+// (split 미반영, backed.fi off-peg, 잘못된 심볼 매핑 등). best arb 계산에서 제외.
+const OUTLIER_BPS = 3000;
+
 function computeArbMatrix(universe, venues, ref) {
   const fees = universe.fees_bps;
   const arbs = [];
@@ -129,6 +133,7 @@ function computeArbMatrix(universe, venues, ref) {
       if (['stooq', 'polygon', 'yahoo'].includes(buy.venue)) continue;
       if (['stooq', 'polygon', 'yahoo'].includes(sell.venue)) continue;
       if (buy.is_index || sell.is_index) continue;
+      if (Math.abs(buy.basis_bps) > OUTLIER_BPS || Math.abs(sell.basis_bps) > OUTLIER_BPS) continue;
       const buyPx = buy.ask, sellPx = sell.bid;
       if (!buyPx || !sellPx) continue;
       const grossBps = ((sellPx - buyPx) / ((sellPx + buyPx) / 2)) * 10000;

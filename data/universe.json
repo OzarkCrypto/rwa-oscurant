@@ -412,7 +412,6 @@
         "stooq": "nflx.us"
       },
       "cex_spot": {
-        "gate": "NFLXX_USDT",
         "kraken": "NFLXxUSD"
       },
       "dex_perp": {
