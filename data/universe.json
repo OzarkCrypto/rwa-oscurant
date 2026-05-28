@@ -97,9 +97,7 @@
         "polygon": "BX",
         "stooq": "bx.us"
       },
-      "cex_spot": {
-        "mexc": "BXXUSDT"
-      },
+      "cex_spot": {},
       "dex_perp": {
         "hyperliquid": {
           "xyz": "xyz:BX"

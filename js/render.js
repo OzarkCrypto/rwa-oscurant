@@ -1,6 +1,8 @@
 const fmtPx = (x) => x == null ? '—' : (x >= 100 ? x.toFixed(2) : x >= 1 ? x.toFixed(3) : x.toFixed(5));
 const fmtBps = (x) => x == null ? '—' : (x > 0 ? '+' : '') + x.toFixed(1);
 const fmtFund = (f) => f == null ? '' : (f * 100 * 24 * 365).toFixed(0) + '%';
+// 단일종목은 universe.json name == ticker. 그대로 두 span 출력하면 "HOODHOOD"처럼 보임.
+const nameSpan = (n, t) => n && n !== t ? `<span class="tkr-name">${n}</span>` : '';
 
 const VENUE_LABELS = {
   binance: 'Binance', bybit: 'Bybit', okx: 'OKX', gate: 'Gate', mexc: 'MEXC',
@@ -61,7 +63,7 @@ export function renderArb(byTicker, opts) {
   for (const e of rows) {
     const b = e.best;
     tbl += `<tr>
-      <td><span class="tkr">${e.ticker}</span><span class="tkr-name">${e.name}</span></td>
+      <td><span class="tkr">${e.ticker}</span>${nameSpan(e.name, e.ticker)}</td>
       <td class="r">${fmtPx(e.ref_px)}</td>
       <td class="r"><span class="venue-cell">${venueBadge(b.buy_venue)}<span class="px">${fmtPx(b.buy_px)}</span></span></td>
       <td class="r"><span class="venue-cell">${venueBadge(b.sell_venue)}<span class="px">${fmtPx(b.sell_px)}</span></span></td>
@@ -80,7 +82,7 @@ export function renderArb(byTicker, opts) {
     cards += `<div class="arb-card">
       <div class="hd">
         <div class="tkr">${e.ticker}</div>
-        <div class="tkr-name">${e.name}</div>
+        ${e.name && e.name !== e.ticker ? `<div class="tkr-name">${e.name}</div>` : ''}
         <div class="tkr-ref">ref ${fmtPx(e.ref_px)}</div>
       </div>
       <div class="net-big ${netCls}">${fmtBps(b.net_bps)}<span class="net-lbl">net bps</span></div>
@@ -113,7 +115,7 @@ export function renderGrid(byTicker) {
   tbl += '</tr></thead><tbody>';
   for (const t of tickers) {
     const e = byTicker[t];
-    tbl += `<tr><td><span class="tkr">${t}</span><span class="tkr-name">${e.name}</span></td><td class="r">${fmtPx(e.ref_px)}</td>`;
+    tbl += `<tr><td><span class="tkr">${t}</span>${nameSpan(e.name, t)}</td><td class="r">${fmtPx(e.ref_px)}</td>`;
     for (const v of venues) {
       const vs = e.venues.filter(x => x.venue === v);
       if (!vs.length) { tbl += '<td class="r muted">—</td>'; continue; }
@@ -140,7 +142,7 @@ export function renderGrid(byTicker) {
     }
     cards += `<div class="grid-card">
       <div class="hd">
-        <div><span class="tkr">${t}</span><span class="tkr-name">${e.name}</span></div>
+        <div><span class="tkr">${t}</span>${nameSpan(e.name, t)}</div>
         <div class="ref">ref <span class="ref-px">${fmtPx(e.ref_px)}</span></div>
       </div>`;
     for (const cat of CAT_ORDER) {

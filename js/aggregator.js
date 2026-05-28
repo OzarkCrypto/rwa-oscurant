@@ -55,18 +55,21 @@ export async function fetchSource(universe, srcId) {
     const p = prices.get(e.sym);
     if (!p) continue;
     let last = p.last;
-    if (e.dep?.ratio) last = last * e.dep.ratio;
+    // ratio = index_unit / etf_unit (e.g. GOLD oz $4400 → GLD ETF share $400, ratio 10.88).
+    // HL HIP3 index price를 ETF 단위로 환산하려면 division.
+    const r = e.dep?.ratio || 1;
+    if (e.dep?.ratio) last = last / r;
     rows.push({
       ticker: e.ticker,
       venue: srcId,
       sym: e.sym,
       raw_last: p.last,
       last,
-      bid: p.bid * (e.dep?.ratio || 1),
-      ask: p.ask * (e.dep?.ratio || 1),
+      bid: p.bid / r,
+      ask: p.ask / r,
       vol24h: p.vol24h || 0,
       funding: p.funding,
-      oracle: p.oracle ? p.oracle * (e.dep?.ratio || 1) : null,
+      oracle: p.oracle ? p.oracle / r : null,
       ts: p.ts,
       is_index: !!e.dep?.is_index
     });
