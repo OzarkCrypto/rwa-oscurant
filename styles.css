@@ -36,7 +36,6 @@ header .m{font-size:11px;color:var(--t3);font-family:var(--m);margin-left:auto;w
 .theme-toggle{font-family:var(--m);font-size:11px;color:var(--t3);background:var(--s);border:1px solid var(--b);border-radius:4px;padding:4px 8px;cursor:pointer;min-height:30px;flex-shrink:0}
 .theme-toggle:hover{color:var(--t);border-color:var(--t)}
 
-/* ─── controls row ─── */
 .controls{display:flex;flex-wrap:wrap;gap:6px 10px;margin-bottom:10px;align-items:center;padding:6px 8px;background:var(--bl);border-radius:6px}
 .ctl{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .ctl label{font-family:var(--m);font-size:11px;color:var(--t3);display:flex;gap:4px;align-items:center}
@@ -58,7 +57,6 @@ header .m{font-size:11px;color:var(--t3);font-family:var(--m);margin-left:auto;w
 .ctl-tabs .view-tab{border:none;border-radius:0;border-right:1px solid var(--b);min-width:72px}
 .ctl-tabs .view-tab:last-child{border-right:none}
 
-/* settings collapse */
 details.settings{margin-left:auto;position:relative}
 details.settings>summary{
   list-style:none;cursor:pointer;font-family:var(--m);font-size:11px;color:var(--t3);
@@ -75,7 +73,6 @@ details[open].settings>summary{color:var(--t);border-color:var(--t)}
 }
 .settings-row{display:flex;flex-direction:column;gap:4px;font-family:var(--m);font-size:11px;color:var(--t3)}
 
-/* venue filter chips */
 .venues-section{width:100%;margin-top:2px}
 .venues-head{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-family:var(--m);font-size:10.5px;color:var(--t3)}
 .venues-head .v-toggle{font-family:var(--m);font-size:10.5px;color:var(--t3);background:transparent;border:none;cursor:pointer;padding:2px 4px;text-decoration:underline}
@@ -91,7 +88,6 @@ details[open].settings>summary{color:var(--t);border-color:var(--t)}
 .vchk[data-cat=dex-spot] .vcat{background:var(--dex-spot)}
 .vchk[data-cat=real] .vcat{background:var(--real)}
 
-/* ─── status chips ─── */
 #status{margin-bottom:8px}
 .status{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between}
 .chips{display:flex;flex-wrap:wrap;gap:3px}
@@ -100,7 +96,6 @@ details[open].settings>summary{color:var(--t);border-color:var(--t)}
 .chip.off{color:var(--t3);opacity:.5}
 .status .muted{font-family:var(--m);font-size:10.8px;color:var(--t3);font-variant-numeric:tabular-nums}
 
-/* ─── arb table (desktop) ─── */
 main{padding:0}
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--b);border-radius:6px;background:var(--s)}
 
@@ -120,7 +115,6 @@ table.arb td .venue-cell{display:inline-flex;align-items:center;gap:6px;justify-
 .pos{color:var(--g);font-weight:700}
 .neg{color:var(--r);font-weight:700}
 
-/* venue badge */
 .v{display:inline-block;padding:2px 6px;font-size:9.5px;font-weight:700;border-radius:3px;background:var(--bl);border:1px solid var(--b);letter-spacing:.02em;text-transform:uppercase;color:var(--t3);min-width:44px;text-align:center}
 .v.cex-spot{color:var(--cex-spot);border-color:color-mix(in srgb,var(--cex-spot) 30%,var(--b))}
 .v.cex-perp{color:var(--cex-perp);border-color:color-mix(in srgb,var(--cex-perp) 30%,var(--b))}
@@ -128,7 +122,6 @@ table.arb td .venue-cell{display:inline-flex;align-items:center;gap:6px;justify-
 .v.dex-spot{color:var(--dex-spot);border-color:color-mix(in srgb,var(--dex-spot) 30%,var(--b))}
 .v.real{color:var(--real);border-color:color-mix(in srgb,var(--real) 30%,var(--b))}
 
-/* ─── grid view (desktop): venue per column ─── */
 table.grid td:first-child{position:sticky;left:0;background:var(--s);z-index:1;border-right:1px solid var(--b)}
 table.grid th:first-child{left:0;z-index:2}
 .grid .cells{display:flex;flex-wrap:wrap;gap:2px;justify-content:flex-end}
@@ -146,7 +139,6 @@ table.grid th:first-child{left:0;z-index:2}
 
 footer{margin-top:18px;padding-top:10px;border-top:1px solid var(--b);font-family:var(--m);font-size:10.5px;color:var(--t3);text-align:center;line-height:1.6}
 
-/* ─── arb card (mobile) ─── */
 .arb-cards{display:none;flex-direction:column;gap:8px}
 .arb-card{
   background:var(--s);border:1px solid var(--b);border-radius:8px;padding:11px 12px;
@@ -169,7 +161,6 @@ footer{margin-top:18px;padding-top:10px;border-top:1px solid var(--b);font-famil
 .arb-card .legs .v{justify-self:start}
 .arb-card .meta{grid-column:1 / -1;display:flex;justify-content:space-between;font-family:var(--m);font-size:10.5px;color:var(--t3);font-variant-numeric:tabular-nums}
 
-/* ─── grid card (mobile) ─── */
 .grid-cards{display:none;flex-direction:column;gap:10px}
 .grid-card{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:11px 12px}
 .grid-card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--b)}
@@ -196,7 +187,6 @@ footer{margin-top:18px;padding-top:10px;border-top:1px solid var(--b);font-famil
 .grid-card .grow.b3{background:var(--b3);color:var(--b3-fg)}
 .grid-card .grow.b1 .bps,.grid-card .grow.b2 .bps,.grid-card .grow.b3 .bps,.grid-card .grow.b1 .sym,.grid-card .grow.b2 .sym,.grid-card .grow.b3 .sym{color:inherit;opacity:.85}
 
-/* ─── responsive switch ─── */
 @media(max-width:720px){
   .c{padding:10px 10px 20px}
   header h1{font-size:14.4px}
@@ -209,7 +199,6 @@ footer{margin-top:18px;padding-top:10px;border-top:1px solid var(--b);font-famil
   .grid-cards.active{display:flex}
 }
 
-/* desktop: show tables, hide cards */
 @media(min-width:721px){
   .tbl-wrap.active{display:block}
   .arb-cards,.grid-cards{display:none !important}

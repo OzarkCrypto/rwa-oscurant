@@ -17,8 +17,6 @@ const MINTS = {
 export async function fetchAll(symbols) {
   const ids = symbols.map(s => MINTS[s]).filter(Boolean);
   if (!ids.length) return new Map();
-  // price.jup.ag/v6는 2025-09 deprecate. lite-api.jup.ag/price/v3로 이동.
-  // 응답: {<mint>: {usdPrice, ...}}
   const url = `https://lite-api.jup.ag/price/v3?ids=${ids.join(',')}`;
   let j;
   try {

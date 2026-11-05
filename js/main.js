@@ -1,7 +1,6 @@
 import {SOURCES, fetchSource, aggregate} from './aggregator.js';
 import {renderArb, renderGrid, renderStatus, renderUpdated, VENUE_LABELS, VENUE_CAT} from './render.js';
 
-// 정렬용 fallback. 실제 표시는 universe.json에 실제로 등장하는 venue만 노출.
 const SRC_ORDER = ['binance', 'bybit', 'okx', 'gate', 'mexc', 'kucoin',
                    'kraken', 'kraken_futures', 'hyperliquid',
                    'stooq', 'polygon', 'backed_solana'];
@@ -21,7 +20,6 @@ const state = {
 async function loadUniverse() {
   const r = await fetch('./data/universe.json', {cache: 'no-store'});
   state.universe = await r.json();
-  // universe에 실제 심볼 가진 venue만 SRC_IDS에 포함 (Binance/OKX/KuCoin xStock delist 후 비어있음)
   const present = new Set();
   for (const tk of Object.values(state.universe.tickers)) {
     for (const bk of ['cex_spot', 'cex_perp', 'dex_perp', 'dex_spot', 'real']) {
@@ -29,7 +27,6 @@ async function loadUniverse() {
       for (const v of Object.keys(m)) present.add(v);
     }
   }
-  // polygon은 key 없으면 항상 0 → 노출하지 않음. localStorage에 키 있으면 다시 포함.
   const hasPolyKey = !!localStorage.getItem('polygon_key');
   SRC_IDS = SRC_ORDER.filter(s => present.has(s) && (s !== 'polygon' || hasPolyKey));
   const saved = JSON.parse(localStorage.getItem('rwa_enabled') || 'null');
@@ -93,7 +90,6 @@ function setupControls() {
     restartTimer();
   };
 
-  // venue filter chips with category dot + all/none toggle
   const venueBox = document.getElementById('venues');
   venueBox.innerHTML = SRC_IDS.map(s => `
     <label class="vchk" data-cat="${VENUE_CAT[s] || ''}">
@@ -110,7 +106,6 @@ function setupControls() {
     };
   });
 
-  // venue all/none toggles
   document.getElementById('v-all').onclick = (e) => { e.preventDefault(); setAllVenues(true); };
   document.getElementById('v-none').onclick = (e) => { e.preventDefault(); setAllVenues(false); };
 
@@ -122,7 +117,6 @@ function setupControls() {
     else localStorage.removeItem('polygon_key');
     const has = !!pgKey.value;
     if (had !== has) {
-      // SRC_IDS 다시 빌드해서 polygon 표시 토글
       if (has && !had) {
         SRC_IDS = [...SRC_IDS.filter(s => s !== 'polygon'), 'polygon'];
         state.enabled.polygon = true;
@@ -130,7 +124,6 @@ function setupControls() {
         SRC_IDS = SRC_IDS.filter(s => s !== 'polygon');
         delete state.enabled.polygon;
       }
-      // venue checkbox 영역 재구성
       const vbox = document.getElementById('venues');
       vbox.innerHTML = SRC_IDS.map(s => `
         <label class="vchk" data-cat="${VENUE_CAT[s] || ''}">
@@ -150,7 +143,6 @@ function setupControls() {
     refresh();
   };
 
-  // close settings dropdown when clicking outside
   document.addEventListener('click', (e) => {
     const s = document.getElementById('settings');
     if (s && s.open && !s.contains(e.target)) s.open = false;
@@ -177,7 +169,6 @@ function restartTimer() {
   timer = setInterval(refresh, state.interval * 1000);
 }
 
-// 1s 카운트 — 다음 refresh 까지 사용자가 freshness 체감하게.
 setInterval(() => {
   const u = document.getElementById('updated');
   if (u && state.lastTs) u.textContent = renderUpdated(state.lastTs);
